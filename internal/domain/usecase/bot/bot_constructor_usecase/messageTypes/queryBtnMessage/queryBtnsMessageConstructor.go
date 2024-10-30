@@ -1,7 +1,6 @@
 package queryBtnMessage
 
 import (
-	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/domain/entity"
 	"github.com/Vlad06013/unlockerTG.git/internal/domain/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -58,6 +57,7 @@ func (c *BtnQueryMessageConstructor) generateButtons() []tgbotapi.InlineKeyboard
 	var buttonText, callbackDataValue, callbackData string
 
 	queryButtons := c.Keyboard.QueryButtons
+
 	if queryButtons != nil {
 		callbackDataQuery := getDataPrefix(c.Message)
 
@@ -65,7 +65,9 @@ func (c *BtnQueryMessageConstructor) generateButtons() []tgbotapi.InlineKeyboard
 			queryButtons.Scan(&buttonText, &callbackDataValue)
 
 			callbackData = callbackDataQuery + callbackDataValue
+
 			buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(buttonText, callbackData))
+
 		}
 	}
 	callBackData := c.checkBackBtn()
@@ -83,7 +85,6 @@ func (c *BtnQueryMessageConstructor) checkBackBtn() string {
 		} else {
 			messagable := c.MessageService.GetMessagableByNextMessage(c.Message.ID)
 			if messagable != nil {
-				fmt.Println("FromMessageId", messagable.FromMessageId, "messagable", messagable)
 				return strconv.FormatUint(uint64(messagable.FromMessageId), 10)
 			}
 		}
