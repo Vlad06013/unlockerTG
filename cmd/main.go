@@ -1,24 +1,28 @@
 package main
 
 import (
-	"github.com/Vlad06013/unlockerTG.git/internal/config"
-	"github.com/Vlad06013/unlockerTG.git/internal/domain/usecase/bot/bot_constructor_usecase"
-	postgres2 "github.com/Vlad06013/unlockerTG.git/pkg/client/postgres"
+	"github.com/Vlad06013/unlockerTG.git/config"
+	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi"
+	dbClient "github.com/Vlad06013/unlockerTG.git/repository"
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/jinzhu/gorm"
 )
 
 func main() {
+	conn := initDB()
+	tgBotApi.Listen(conn)
+}
+
+func initDB() *gorm.DB {
 	err := config.SetEnvValues()
 	if err != nil {
 		panic(err)
 	}
-
-	var cfg config.ConfigDBPostgres
+	var cfg config.DBPostgres
 	err = cleanenv.ReadEnv(&cfg)
 	if err != nil {
 		panic(err)
 	}
-	var conn = postgres2.NewConnection(cfg)
-	bu := bot_constructor_usecase.NewBotUseCase(conn)
-	bu.StartListenerUpdates()
+
+	return dbClient.NewConnection(cfg)
 }
