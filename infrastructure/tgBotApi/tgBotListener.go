@@ -70,9 +70,10 @@ func Listen(db *gorm.DB) {
 			//TextMessage(update.Message, *botApi, conn)
 		}
 		if update.CallbackQuery != nil {
+			//fmt.Println(update.CallbackQuery)
+
 			UpdateHandlers.CallBackHandler(update.CallbackQuery, db, *botApi)
 
-			//fmt.Println(update.CallbackQuery.ID)
 			//var message = messageType.AlertMessage{
 			//	Text:       "ssss",
 			//	Bot:        *botApi,

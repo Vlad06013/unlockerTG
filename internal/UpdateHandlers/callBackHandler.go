@@ -16,8 +16,7 @@ func CallBackHandler(callBack *tgbotapi.CallbackQuery, db *gorm.DB, bot tgbotapi
 	s := TgUser.Storage{DB: db}
 	client := s.InitClient(callBack.From.ID, callBack.From.UserName)
 
-	//fmt.Print(callBack.Data)
-	var screen = checkScreen(callBack.Data, client, bot, db)
+	var screen = checkScreen(callBack.Data, client, bot, db, callBack)
 
 	if screen != nil {
 		var sentResult = screen.GetOutputMessage().Send()
@@ -30,19 +29,19 @@ func CallBackHandler(callBack *tgbotapi.CallbackQuery, db *gorm.DB, bot tgbotapi
 	}
 }
 
-func checkScreen(data string, client *TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB) messageScreens.BaseScreen {
+func checkScreen(data string, client *TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, callBack *tgbotapi.CallbackQuery) messageScreens.BaseScreen {
 	dataParsed, filter := parseCallBack(data)
 	data = dataParsed
 	var screen messageScreens.BaseScreen = nil
 
 	if client.LastScreen == nil {
-		return messageScreens.GetScreen(*client, bot, "categories", db, nil)
+		return messageScreens.GetScreen(*client, bot, "categories", db, nil, callBack)
 	}
 
-	screen = messageScreens.GetScreen(*client, bot, data, db, filter)
+	screen = messageScreens.GetScreen(*client, bot, data, db, filter, callBack)
 
 	if screen == nil {
-		screen = messageScreens.GetScreen(*client, bot, "not_found", db, nil)
+		screen = messageScreens.GetScreen(*client, bot, "not_found", db, nil, callBack)
 		fmt.Println("Не найден экран " + data)
 	}
 
@@ -58,7 +57,7 @@ func parseCallBack(data string) (string, *uint64) {
 	if len(res) > 1 {
 		filter, _ = strconv.ParseUint(res[1], 10, 32)
 	}
-	fmt.Println(data, " ", filter)
+	//fmt.Println(data, " ", filter)
 
 	return data, &filter
 }

@@ -11,20 +11,8 @@ type AlertMessage struct {
 }
 
 func (t AlertMessage) Send() tgbotapi.Message {
-
 	msg := tgbotapi.NewCallbackWithAlert(t.CallBackID, t.Text)
 	res, _ := t.Bot.Send(msg)
-	//if err != nil {
-	//	fmt.Println("sendError", err)
-	//}
+
 	return res
-}
-
-//func (t AlertMessage) GetScreenName() string {
-//	return t.Screen
-//}
-
-func (t AlertMessage) MessageType() OutputMessage {
-	var output OutputMessage = t
-	return output
 }

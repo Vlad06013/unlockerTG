@@ -53,6 +53,17 @@ type Programming struct {
 	Name string `json:"name" gorm:"column:name"`
 }
 
+func (r *Storage) GetById(Id uint64) *CarModel {
+	var carModel CarModel
+
+	result := r.Preload("Prepare").Preload("Transponder").Preload("Pult").Preload("Programming").Preload("CarMark").First(&carModel, "id = ?", Id)
+
+	if result.Error != nil {
+		log.Fatalf("Ошибка при получении данных: %v", result.Error)
+	}
+	return &carModel
+}
+
 func (r *Storage) GetByMarkId(markId uint64) []CarModel {
 	var carModels []CarModel
 

@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB, filter *uint64) BaseScreen {
+func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB, filter *uint64, callBack *tgbotapi.CallbackQuery) BaseScreen {
 	switch name {
 
 	case "categories":
@@ -27,12 +27,15 @@ func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB
 		return CarMarks(user, bot, db)
 	case "carModels":
 		return CarModels(user, bot, db, filter)
+	case "carModelDetail":
+		return CarModelDetail(user, bot, db, filter, callBack)
 
 		//COMMANDS
 	case "/doorlocks":
 		return DoorLockMarks(user, bot, db)
 	case "/cars":
 		return CarMarks(user, bot, db)
+
 	}
 	return nil
 }

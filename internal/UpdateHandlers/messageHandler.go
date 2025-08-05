@@ -15,13 +15,13 @@ func MessageHandler(message *tgbotapi.Message, db *gorm.DB, bot tgbotapi.BotAPI)
 	var screen messageScreens.BaseScreen = nil
 
 	if client.LastScreen == nil || *client.LastScreen == "" {
-		screen = messageScreens.GetScreen(*client, bot, "categories", db, nil)
+		screen = messageScreens.GetScreen(*client, bot, "categories", db, nil, nil)
 	} else {
-		screen = messageScreens.GetScreen(*client, bot, message.Text, db, nil)
+		screen = messageScreens.GetScreen(*client, bot, message.Text, db, nil, nil)
 	}
 
 	if screen == nil {
-		screen = messageScreens.GetScreen(*client, bot, "not_found", db, nil)
+		screen = messageScreens.GetScreen(*client, bot, "not_found", db, nil, nil)
 		fmt.Println("Не найден экран " + message.Text)
 	}
 
