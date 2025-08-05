@@ -3,9 +3,7 @@ package messageScreens
 import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockMark"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
 	"strconv"
 )
 
@@ -13,8 +11,8 @@ type DoorLockMarksScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func DoorLockMarks(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB) BaseScreen {
-	s := DoorLockMark.Storage{DB: db}
+func DoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	s := DoorLockMark.Storage{DB: dto.DB}
 
 	var buttons [][]tgbotapi.InlineKeyboardButton
 	var keyboard tgbotapi.InlineKeyboardMarkup
@@ -27,7 +25,7 @@ func DoorLockMarks(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB) BaseScr
 	rows := make([][]tgbotapi.InlineKeyboardButton, len(doorsLockMarks)+1)
 
 	for i := 0; i < len(doorsLockMarks); i++ {
-		callbackData := "doorLockModels|" + strconv.FormatUint(uint64(doorsLockMarks[i].ID), 10)
+		callbackData := "doorLockModels|id_" + strconv.FormatUint(uint64(doorsLockMarks[i].ID), 10)
 		btnText := doorsLockMarks[i].Name
 
 		rows[i] = tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
@@ -48,8 +46,8 @@ func DoorLockMarks(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB) BaseScr
 
 	var message = messageType.TextWithButtonsMessage{
 		Text:    "Выберете производителя замка",
-		Bot:     bot,
-		ChatId:  user.TgUserId,
+		Bot:     dto.Bot,
+		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,
 	}
 
@@ -57,9 +55,9 @@ func DoorLockMarks(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB) BaseScr
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, true
 }
 
 func (c DoorLockMarksScreen) GetOutputMessage() messageType.OutputMessage {

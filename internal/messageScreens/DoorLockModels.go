@@ -3,9 +3,7 @@ package messageScreens
 import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockModel"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
 	"strconv"
 )
 
@@ -13,13 +11,13 @@ type DoorLockModelsScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func DoorLockModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter *uint64) BaseScreen {
-	s := DoorLockModel.Storage{DB: db}
+func DoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	s := DoorLockModel.Storage{DB: dto.DB}
 
 	var buttons [][]tgbotapi.InlineKeyboardButton
 	var keyboard tgbotapi.InlineKeyboardMarkup
 	backBtnCB := "doorLockMarks"
-	doorsLockModels := s.GetByMarkId(*filter)
+	doorsLockModels := s.GetByMarkId(1)
 	text := "Выберете модель замка"
 
 	if len(doorsLockModels) == 0 {
@@ -28,7 +26,7 @@ func DoorLockModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter
 	rows := make([][]tgbotapi.InlineKeyboardButton, len(doorsLockModels)+1)
 
 	for i := 0; i < len(doorsLockModels); i++ {
-		callbackData := "doorLockModelsDetail|" + strconv.FormatUint(uint64(doorsLockModels[i].ID), 10)
+		callbackData := "doorLockModelsDetail|id_" + strconv.FormatUint(uint64(doorsLockModels[i].ID), 10)
 		btnText := doorsLockModels[i].Name
 
 		rows[i] = tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
@@ -49,8 +47,8 @@ func DoorLockModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter
 
 	var message = messageType.TextWithButtonsMessage{
 		Text:    text,
-		Bot:     bot,
-		ChatId:  user.TgUserId,
+		Bot:     dto.Bot,
+		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,
 	}
 
@@ -58,9 +56,9 @@ func DoorLockModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, true
 }
 
 func (c DoorLockModelsScreen) GetOutputMessage() messageType.OutputMessage {

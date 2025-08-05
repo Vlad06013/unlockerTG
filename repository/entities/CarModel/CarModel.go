@@ -64,10 +64,11 @@ func (r *Storage) GetById(Id uint64) *CarModel {
 	return &carModel
 }
 
-func (r *Storage) GetByMarkId(markId uint64) []CarModel {
+func (r *Storage) GetByMarkId(markId uint64, page uint, pageSize uint) []CarModel {
 	var carModels []CarModel
+	offset := int(page) * int(pageSize)
 
-	result := r.Find(&carModels, "car_mark_id = ?", markId)
+	result := r.Limit(pageSize).Offset(offset).Find(&carModels, "car_mark_id = ?", markId)
 
 	if result.Error != nil {
 		log.Fatalf("Ошибка при получении данных: %v", result.Error)

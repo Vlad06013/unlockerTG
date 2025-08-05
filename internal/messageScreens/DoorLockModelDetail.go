@@ -4,9 +4,7 @@ import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/Attachment"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockModel"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
 	"strconv"
 )
 
@@ -14,9 +12,9 @@ type DoorLockModelDetailScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func DoorLockModelDetail(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter *uint64) BaseScreen {
-	s := DoorLockModel.Storage{DB: db}
-	doorsLockModel := s.GetById(*filter)
+func DoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	s := DoorLockModel.Storage{DB: dto.DB}
+	doorsLockModel := s.GetById(1)
 
 	iconFalse := "❌"
 	iconTrue := "✅"
@@ -60,7 +58,7 @@ func DoorLockModelDetail(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, f
 
 	var mediaGroup []interface{}
 
-	a := Attachment.Storage{DB: db}
+	a := Attachment.Storage{DB: dto.DB}
 	attachmentables := a.GetForDoorLockModel(doorsLockModel.ID)
 
 	for i, attachmentable := range attachmentables {
@@ -75,8 +73,8 @@ func DoorLockModelDetail(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, f
 	}
 
 	var message = messageType.MessageWithImagesGroup{
-		Bot:    bot,
-		ChatId: user.TgUserId,
+		Bot:    dto.Bot,
+		ChatId: dto.User.TgUserId,
 		Media:  mediaGroup,
 	}
 
@@ -84,9 +82,9 @@ func DoorLockModelDetail(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, f
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, false
 }
 
 func (c DoorLockModelDetailScreen) GetOutputMessage() messageType.OutputMessage {

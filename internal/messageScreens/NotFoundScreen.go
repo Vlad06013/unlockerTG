@@ -2,7 +2,6 @@ package messageScreens
 
 import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -10,7 +9,7 @@ type NotFoundScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func NotFound(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
+func NotFound(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	cb := "categories"
 
 	var keyboard tgbotapi.InlineKeyboardMarkup
@@ -28,8 +27,8 @@ func NotFound(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
 
 	var message = messageType.TextWithButtonsMessage{
 		Text:    "К сожалению ничего не найдено",
-		Bot:     bot,
-		ChatId:  user.TgUserId,
+		Bot:     dto.Bot,
+		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,
 	}
 
@@ -37,9 +36,9 @@ func NotFound(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, true
 }
 
 func (c NotFoundScreen) GetOutputMessage() messageType.OutputMessage {

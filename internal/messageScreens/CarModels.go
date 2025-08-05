@@ -3,9 +3,7 @@ package messageScreens
 import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/CarModel"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
 	"strconv"
 )
 
@@ -13,35 +11,57 @@ type CarModelsScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func CarModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter *uint64) BaseScreen {
-	s := CarModel.Storage{DB: db}
+func CarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
+	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
+	pagination := 10
 
+	backBtn := tgbotapi.NewInlineKeyboardButtonData("Назад", "carMarks")
+	nextPageBtn := tgbotapi.NewInlineKeyboardButtonData(">>", "carModels|id_"+strconv.FormatUint(uint64(id), 10)+"|page_"+strconv.FormatUint(uint64(page+1), 10))
+	previousPageBtn := tgbotapi.NewInlineKeyboardButtonData("<<", "carModels|id_"+strconv.FormatUint(uint64(id), 10)+"|page_"+strconv.FormatUint(uint64(page-1), 10))
+
+	s := CarModel.Storage{DB: dto.DB}
 	var buttons [][]tgbotapi.InlineKeyboardButton
 	var keyboard tgbotapi.InlineKeyboardMarkup
-	backBtnCB := "carMarks"
-	carModels := s.GetByMarkId(*filter)
+
+	carModels := s.GetByMarkId(id, uint(page), uint(pagination))
+	println(len(carModels))
 	text := "Выберете модель авто"
 
 	if len(carModels) == 0 {
 		text = "Модели отсутствуют"
 	}
-	rows := make([][]tgbotapi.InlineKeyboardButton, len(carModels)+1)
+	var row []tgbotapi.InlineKeyboardButton
+	var controlRow []tgbotapi.InlineKeyboardButton
+	var rows [][]tgbotapi.InlineKeyboardButton
+	countInRow := 4
 
 	for i := 0; i < len(carModels); i++ {
-		callbackData := "carModelDetail|" + strconv.FormatUint(uint64(carModels[i].ID), 10)
-		btnText := carModels[i].Name
+		callbackData := "carModelDetail|id_" + strconv.FormatUint(uint64(carModels[i].ID), 10)
 
-		rows[i] = tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
-			Text:         btnText,
-			CallbackData: &callbackData,
-		})
+		btnText := carModels[i].Name
+		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
+
+		row = append(row, button)
+
+		if (i+1)%countInRow == 0 || i == len(carModels)-1 {
+			rows = append(rows, row)
+			row = nil
+		}
 	}
-	rows[len(carModels)] = tgbotapi.NewInlineKeyboardRow(
-		tgbotapi.InlineKeyboardButton{
-			Text:         "Назад",
-			CallbackData: &backBtnCB,
-		},
-	)
+
+	if page > 0 {
+		controlRow = append(controlRow, previousPageBtn)
+	}
+
+	controlRow = append(controlRow, backBtn)
+
+	if len(carModels) == pagination {
+		controlRow = append(controlRow, nextPageBtn)
+	}
+
+	rows = append(rows, controlRow)
+	keyboard = tgbotapi.NewInlineKeyboardMarkup(rows...)
 
 	buttons = rows
 
@@ -49,8 +69,8 @@ func CarModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter *uin
 
 	var message = messageType.TextWithButtonsMessage{
 		Text:    text,
-		Bot:     bot,
-		ChatId:  user.TgUserId,
+		Bot:     dto.Bot,
+		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,
 	}
 
@@ -58,9 +78,9 @@ func CarModels(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter *uin
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, true
 }
 
 func (c CarModelsScreen) GetOutputMessage() messageType.OutputMessage {

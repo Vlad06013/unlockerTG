@@ -1,41 +1,36 @@
 package messageScreens
 
-import (
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
-)
-
-func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB, filter *uint64, callBack *tgbotapi.CallbackQuery) BaseScreen {
-	switch name {
+// func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB, filter *uint64, callBack *tgbotapi.CallbackQuery) (baseScreen BaseScreen, clearPrevMessage bool) {
+func GetScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	switch dto.ScreenName {
 
 	case "categories":
-		return Categories(user, bot)
+		return Categories(dto)
 
 		//DOORS
 	case "doorLockMarks":
-		return DoorLockMarks(user, bot, db)
+		return DoorLockMarks(dto)
 	case "doorLockModels":
-		return DoorLockModels(user, bot, db, filter)
+		return DoorLockModels(dto)
 	case "doorLockModelsDetail":
-		return DoorLockModelDetail(user, bot, db, filter)
+		return DoorLockModelDetail(dto)
 	case "not_found":
-		return NotFound(user, bot)
+		return NotFound(dto)
 
 		//CARS
 	case "carMarks":
-		return CarMarks(user, bot, db)
+		return CarMarks(dto)
 	case "carModels":
-		return CarModels(user, bot, db, filter)
+		return CarModels(dto)
 	case "carModelDetail":
-		return CarModelDetail(user, bot, db, filter, callBack)
+		return CarModelDetail(dto)
 
 		//COMMANDS
 	case "/doorlocks":
-		return DoorLockMarks(user, bot, db)
+		return DoorLockMarks(dto)
 	case "/cars":
-		return CarMarks(user, bot, db)
+		return CarMarks(dto)
 
 	}
-	return nil
+	return nil, false
 }

@@ -2,7 +2,6 @@ package messageScreens
 
 import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -10,7 +9,8 @@ type CategoryScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
+func Categories(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	//func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) (baseScreen BaseScreen, clearPrevMessage bool) {
 	cars := "carMarks"
 	doors := "doorLockMarks"
 
@@ -33,8 +33,8 @@ func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
 
 	var message = messageType.TextWithButtonsMessage{
 		Text:    "Выберете категорию",
-		Bot:     bot,
-		ChatId:  user.TgUserId,
+		Bot:     dto.Bot,
+		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,
 	}
 
@@ -42,9 +42,9 @@ func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, true
 }
 
 func (c CategoryScreen) GetOutputMessage() messageType.OutputMessage {

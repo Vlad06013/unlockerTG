@@ -1,22 +1,21 @@
 package messageScreens
 
 import (
-	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/CarModel"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
+	"strconv"
 )
 
 type CarModelDetailScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func CarModelDetail(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter *uint64, callBack *tgbotapi.CallbackQuery) BaseScreen {
-	s := CarModel.Storage{DB: db}
-	carModel := s.GetById(*filter)
-	fmt.Println(callBack.ID, callBack.Data)
+func CarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	callbackId := dto.Filter["callback_id"]
+	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
+
+	s := CarModel.Storage{DB: dto.DB}
+	carModel := s.GetById(id)
 
 	iconFalse := "❌"
 	iconTrue := "✅"
@@ -43,18 +42,19 @@ func CarModelDetail(user TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB, filter
 	//Описание: ` + carModel.Description + `.`
 
 	var message = messageType.AlertMessage{
-		Text:       text,
-		Bot:        bot,
-		CallBackID: callBack.ID,
+		Text: text,
+		Bot:  dto.Bot,
+		//CallBackID: callBack.ID,
+		CallBackID: callbackId,
 	}
 
 	var screen = DoorLockMarksScreen{
 		OutputMessage: messageType.OutputMessage(message),
 	}
 
-	var baseScreen BaseScreen = screen
+	var baseScreenInterface BaseScreen = screen
 
-	return baseScreen
+	return baseScreenInterface, false
 }
 
 func (c CarModelDetailScreen) GetOutputMessage() messageType.OutputMessage {

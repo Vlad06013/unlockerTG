@@ -16,12 +16,12 @@ type Storage struct {
 	*gorm.DB
 }
 
-func (r *Storage) GetAll() []CarMark {
+func (r *Storage) GetAll(page uint, pageSize uint) []CarMark {
 	var carMarks []CarMark
-	result := r.Find(&carMarks)
+	offset := int(page) * int(pageSize)
+	result := r.Limit(pageSize).Offset(offset).Find(&carMarks).Order("name asc")
 
 	if result.Error != nil {
-		// Обработка ошибки
 		log.Fatalf("Ошибка при получении данных: %v", result.Error)
 	}
 	return carMarks
