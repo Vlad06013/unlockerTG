@@ -42,6 +42,7 @@ func checkScreen(data string, client *TgUser.TgUser, bot tgbotapi.BotAPI, db *go
 	screen = messageScreens.GetScreen(*client, bot, data, db, filter)
 
 	if screen == nil {
+		screen = messageScreens.GetScreen(*client, bot, "not_found", db, nil)
 		fmt.Println("Не найден экран " + data)
 	}
 

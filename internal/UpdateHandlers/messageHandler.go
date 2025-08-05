@@ -1,6 +1,7 @@
 package UpdateHandlers
 
 import (
+	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/messageScreens"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -21,8 +22,7 @@ func MessageHandler(message *tgbotapi.Message, db *gorm.DB, bot tgbotapi.BotAPI)
 
 	if screen == nil {
 		screen = messageScreens.GetScreen(*client, bot, "not_found", db, nil)
-
-		//panic("Screen object not found")
+		fmt.Println("Не найден экран " + message.Text)
 	}
 
 	var sentResult = screen.GetOutputMessage().Send()
