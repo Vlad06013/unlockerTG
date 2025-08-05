@@ -57,7 +57,7 @@ func parseCallBack(data string) (string, *uint64) {
 	if len(res) > 1 {
 		filter, _ = strconv.ParseUint(res[1], 10, 32)
 	}
-	fmt.Println(data, " ", filter)
+	//fmt.Println(data, " ", filter)
 
 	return data, &filter
 }

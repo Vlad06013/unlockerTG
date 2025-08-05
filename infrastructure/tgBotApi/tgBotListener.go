@@ -1,7 +1,6 @@
 package tgBotApi
 
 import (
-	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/UpdateHandlers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jinzhu/gorm"
@@ -73,7 +72,7 @@ func Listen(db *gorm.DB) {
 		if update.CallbackQuery != nil {
 			UpdateHandlers.CallBackHandler(update.CallbackQuery, db, *botApi)
 
-			fmt.Println(update.CallbackQuery.ID)
+			//fmt.Println(update.CallbackQuery.ID)
 			//var message = messageType.AlertMessage{
 			//	Text:       "ssss",
 			//	Bot:        *botApi,
@@ -85,10 +84,12 @@ func Listen(db *gorm.DB) {
 			//CallBackQuery(update.CallbackQuery, *botApi, conn)
 			//bu.CallbackQueryMessageHandler(bot, update.CallbackQuery)
 		}
-		//if update.MyChatMember != nil {
-		//	ReadMyChatMember(db,)
-		//	//	telegram.SetUser(db, update.MyChatMember.From.ID, update.MyChatMember.From.UserName)
-		//	//	telegram.SetChatMember(db, *update.MyChatMember, *bot.Bot)
-		//}
+		if update.MyChatMember != nil {
+			//fmt.Println(update.MyChatMember)
+
+			//	ReadMyChatMember(db,)
+			//	//	telegram.SetUser(db, update.MyChatMember.From.ID, update.MyChatMember.From.UserName)
+			//	//	telegram.SetChatMember(db, *update.MyChatMember, *bot.Bot)
+		}
 	}
 }
