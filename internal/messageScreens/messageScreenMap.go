@@ -16,6 +16,12 @@ func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB
 		return DoorLockModels(user, bot, db, filter)
 	case "doorLockModelsDetail":
 		return DoorLockModelDetail(user, bot, db, filter)
+	case "not_found":
+		return NotFound(user, bot)
+
+		//COMMANDS
+	case "/doorlocks":
+		return DoorLockMarks(user, bot, db)
 	}
 	return nil
 }
