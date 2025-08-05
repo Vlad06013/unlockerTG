@@ -13,9 +13,10 @@ func MessageHandler(message *tgbotapi.Message, db *gorm.DB, bot tgbotapi.BotAPI)
 
 	var screen messageScreens.BaseScreen = nil
 
-	if client.LastScreen == nil {
+	if client.LastScreen == nil || *client.LastScreen == "" {
 		screen = messageScreens.GetScreen(*client, bot, "categories", db, nil)
 	}
+	screen = messageScreens.GetScreen(*client, bot, "categories", db, nil)
 
 	if screen == nil {
 		panic("Screen object not found")

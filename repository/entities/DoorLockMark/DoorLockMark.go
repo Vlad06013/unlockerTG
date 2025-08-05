@@ -6,7 +6,7 @@ import (
 )
 
 type DoorsLockMark struct {
-	ID        uint   `json:"id" gorm:"primary_key;column:id"`
+	ID        uint64 `json:"id" gorm:"primary_key;column:id"`
 	Name      string `json:"name" gorm:"column:name"`
 	CreatedAt string `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt string `json:"updated_at" gorm:"column:updated_at"`
