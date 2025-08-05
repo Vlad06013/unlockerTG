@@ -6,7 +6,9 @@ import (
 )
 
 func SaveLastScreen(s TgUser.Storage, tgMessageId int, clientId uint, screenName string) {
-	s.UpdateLastMessageClient(tgMessageId, clientId)
+	if tgMessageId != 0 {
+		s.UpdateLastMessageClient(tgMessageId, clientId)
+	}
 	s.SaveLastScreenWithFilter(screenName, nil, clientId)
 }
 

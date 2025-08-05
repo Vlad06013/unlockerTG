@@ -25,17 +25,18 @@ func MessageHandler(message *tgbotapi.Message, db *gorm.DB, bot tgbotapi.BotAPI)
 	} else {
 		dto.ScreenName = message.Text
 		screen, _ = messageScreens.GetScreen(dto)
-		//screen, _ = messageScreens.GetScreen(*client, bot, message.Text, db, nil, nil)
 	}
 
 	if screen == nil {
 		dto.ScreenName = "not_found"
 		screen, _ = messageScreens.GetScreen(dto)
-		//screen, _ = messageScreens.GetScreen(*client, bot, "not_found", db, nil, nil)
 		fmt.Println("Не найден экран " + message.Text)
 	}
 
 	var sentResult = screen.GetOutputMessage().Send()
 
+	if client.LastTgMessageId != nil {
+		DeleteLastMessage(message.From.ID, *client.LastTgMessageId, bot)
+	}
 	SaveLastScreen(s, sentResult.MessageID, client.ID, screen.GetScreenName())
 }
