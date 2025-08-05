@@ -42,9 +42,8 @@ func CarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage 
 	//Описание: ` + carModel.Description + `.`
 
 	var message = messageType.AlertMessage{
-		Text: text,
-		Bot:  dto.Bot,
-		//CallBackID: callBack.ID,
+		Text:       text,
+		Bot:        dto.Bot,
 		CallBackID: callbackId,
 	}
 
