@@ -11,7 +11,7 @@ type CategoryScreen struct {
 }
 
 func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
-	//cars := "cars"
+	cars := "carMarks"
 	doors := "doorLockMarks"
 
 	var keyboard tgbotapi.InlineKeyboardMarkup
@@ -22,6 +22,10 @@ func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) BaseScreen {
 		tgbotapi.InlineKeyboardButton{
 			Text:         "Дверные замки",
 			CallbackData: &doors,
+		},
+		tgbotapi.InlineKeyboardButton{
+			Text:         "Авто",
+			CallbackData: &cars,
 		},
 	)
 

@@ -8,8 +8,11 @@ import (
 
 func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB, filter *uint64) BaseScreen {
 	switch name {
+
 	case "categories":
 		return Categories(user, bot)
+
+		//DOORS
 	case "doorLockMarks":
 		return DoorLockMarks(user, bot, db)
 	case "doorLockModels":
@@ -19,9 +22,17 @@ func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB
 	case "not_found":
 		return NotFound(user, bot)
 
+		//CARS
+	case "carMarks":
+		return CarMarks(user, bot, db)
+	case "carModels":
+		return CarModels(user, bot, db, filter)
+
 		//COMMANDS
 	case "/doorlocks":
 		return DoorLockMarks(user, bot, db)
+	case "/cars":
+		return CarMarks(user, bot, db)
 	}
 	return nil
 }
