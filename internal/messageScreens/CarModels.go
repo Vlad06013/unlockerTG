@@ -25,7 +25,6 @@ func CarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool)
 	var keyboard tgbotapi.InlineKeyboardMarkup
 
 	carModels := s.GetByMarkId(id, uint(page), uint(pagination))
-	println(len(carModels))
 	text := "Выберете модель авто"
 
 	if len(carModels) == 0 {

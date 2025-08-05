@@ -15,6 +15,7 @@ func CallBackHandler(callBack *tgbotapi.CallbackQuery, db *gorm.DB, bot tgbotapi
 
 	var screen, clearPrevMessage = checkScreen(callBack, client, bot, db)
 
+	fmt.Println(clearPrevMessage, *client.LastTgMessageId, *client.LastScreen)
 	if screen != nil {
 		var sentResult = screen.GetOutputMessage().Send()
 
@@ -40,16 +41,13 @@ func checkScreen(callBack *tgbotapi.CallbackQuery, client *TgUser.TgUser, bot tg
 	if client.LastScreen == nil {
 		dto.ScreenName = "categories"
 		return messageScreens.GetScreen(dto)
-		//return messageScreens.GetScreen(*client, bot, "categories", db, nil, callBack)
 	}
 	dto.ScreenName = data
 	screen, clearPrevMessage = messageScreens.GetScreen(dto)
-	//screen, clearPrevMessage = messageScreens.GetScreen(*client, bot, data, db, filter, callBack)
 
 	if screen == nil {
 		dto.ScreenName = "not_found"
 		screen, clearPrevMessage = messageScreens.GetScreen(dto)
-		//screen, clearPrevMessage = messageScreens.GetScreen(*client, bot, "not_found", db, nil, callBack)
 		fmt.Println("Не найден экран " + data)
 	}
 
