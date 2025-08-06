@@ -1,7 +1,9 @@
 package tgBotApi
 
 import (
+	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/UpdateHandlers"
+	"github.com/Vlad06013/unlockerTG.git/repository/entities/Setting"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jinzhu/gorm"
 	"log"
@@ -9,7 +11,10 @@ import (
 
 func Listen(db *gorm.DB) {
 
-	botApi, err := tgbotapi.NewBotAPI("8362746471:AAFPTxWcNirckvvCtsNknFaIFSKDWLuZrsM")
+	s := Setting.Storage{DB: db}
+	setting := s.GetBySlug("bot_token")
+
+	botApi, err := tgbotapi.NewBotAPI(setting.Value)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -28,11 +33,8 @@ func Listen(db *gorm.DB) {
 			UpdateHandlers.CallBackHandler(update.CallbackQuery, db, *botApi)
 		}
 		if update.MyChatMember != nil {
-			//fmt.Println(update.MyChatMember)
-
-			//	ReadMyChatMember(db,)
-			//	//	telegram.SetUser(db, update.MyChatMember.From.ID, update.MyChatMember.From.UserName)
-			//	//	telegram.SetChatMember(db, *update.MyChatMember, *bot.Bot)
+			fmt.Println(update.MyChatMember)
 		}
+
 	}
 }
