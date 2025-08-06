@@ -18,10 +18,4 @@ type BaseScreenDTO struct {
 	DB         *gorm.DB
 	ScreenName string
 	Filter     map[string]string
-	//Filter     []Filter
 }
-
-//type Filter struct {
-//	Name  string
-//	Value string
-//}
