@@ -3,9 +3,7 @@ package UpdateHandlers
 import (
 	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/messageScreens"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockModel"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"strconv"
 	"strings"
 )
 
@@ -20,33 +18,6 @@ func CallBackHandler(callBack *tgbotapi.CallbackQuery) {
 	}
 	SaveLastMessageId(sentResult.MessageID, client.ID)
 	checkNeedAdditionalMessage()
-}
-
-func checkNeedAdditionalMessage() {
-	fmt.Println(screenName)
-
-	if screenName == "doorLockModelsDetail" {
-		doorLockModelId, _ := strconv.ParseUint(filterMap["id"], 10, 32)
-
-		s := DoorLockModel.Storage{DB: DbConnection}
-		doorLockModel := s.GetById(doorLockModelId)
-
-		filter := map[string]string{
-			"doorLockMarkId": strconv.FormatUint(doorLockModel.DoorLockMarkId, 10),
-		}
-		dto := messageScreens.BaseScreenDTO{
-			User:       *client,
-			Bot:        Bot,
-			DB:         DbConnection,
-			ScreenName: "doorLockModels",
-			Filter:     filter,
-		}
-
-		screenDoorLockModels, _ := messageScreens.GetScreen(dto)
-
-		var sentResult = screenDoorLockModels.GetOutputMessage().Send()
-		SaveLastMessageId(sentResult.MessageID, client.ID)
-	}
 }
 
 func checkScreen(callBack *tgbotapi.CallbackQuery) (baseScreen messageScreens.BaseScreen, clearPrevMessage bool) {
