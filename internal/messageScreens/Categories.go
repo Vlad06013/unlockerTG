@@ -9,8 +9,7 @@ type CategoryScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func Categories(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
-	//func Categories(user TgUser.TgUser, bot tgbotapi.BotAPI) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewCategoriesScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	cars := "carMarks"
 	doors := "doorLockMarks"
 

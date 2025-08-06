@@ -12,7 +12,7 @@ type DoorLockModelDetailScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func DoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	s := DoorLockModel.Storage{DB: dto.DB}
 	doorsLockModel := s.GetById(1)
 

@@ -11,7 +11,7 @@ type DoorLockModelsScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func DoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewDoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	s := DoorLockModel.Storage{DB: dto.DB}
 
 	var buttons [][]tgbotapi.InlineKeyboardButton

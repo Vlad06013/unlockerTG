@@ -11,7 +11,7 @@ type CarMarksScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func CarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
 	pagination := 40

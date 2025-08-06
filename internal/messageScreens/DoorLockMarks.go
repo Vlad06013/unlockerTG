@@ -11,7 +11,7 @@ type DoorLockMarksScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func DoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	s := DoorLockMark.Storage{DB: dto.DB}
 
 	var buttons [][]tgbotapi.InlineKeyboardButton
@@ -19,9 +19,6 @@ func DoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage b
 	backBtnCB := "categories"
 	doorsLockMarks := s.GetAll()
 
-	//if len(doorsLockMarks) == 0 {
-	//	text = "Нет подключенных доменов"
-	//}
 	rows := make([][]tgbotapi.InlineKeyboardButton, len(doorsLockMarks)+1)
 
 	for i := 0; i < len(doorsLockMarks); i++ {

@@ -9,7 +9,7 @@ type NotFoundScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func NotFound(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewNotFound(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	cb := "categories"
 
 	var keyboard tgbotapi.InlineKeyboardMarkup

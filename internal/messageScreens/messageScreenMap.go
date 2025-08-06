@@ -1,35 +1,34 @@
 package messageScreens
 
-// func GetScreen(user TgUser.TgUser, bot tgbotapi.BotAPI, name string, db *gorm.DB, filter *uint64, callBack *tgbotapi.CallbackQuery) (baseScreen BaseScreen, clearPrevMessage bool) {
 func GetScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	switch dto.ScreenName {
 
 	case "categories":
-		return Categories(dto)
+		return NewCategoriesScreen(dto)
 
 		//DOORS
 	case "doorLockMarks":
-		return DoorLockMarks(dto)
+		return NewDoorLockMarks(dto)
 	case "doorLockModels":
-		return DoorLockModels(dto)
+		return NewDoorLockModels(dto)
 	case "doorLockModelsDetail":
-		return DoorLockModelDetail(dto)
+		return NewDoorLockModelDetail(dto)
 	case "not_found":
-		return NotFound(dto)
+		return NewNotFound(dto)
 
 		//CARS
 	case "carMarks":
-		return CarMarks(dto)
+		return NewCarMarks(dto)
 	case "carModels":
-		return CarModels(dto)
+		return NewCarModels(dto)
 	case "carModelDetail":
-		return CarModelDetail(dto)
+		return NewCarModelDetail(dto)
 
 		//COMMANDS
 	case "/doorlocks":
-		return DoorLockMarks(dto)
+		return NewDoorLockMarks(dto)
 	case "/cars":
-		return CarMarks(dto)
+		return NewCarMarks(dto)
 
 	}
 	return nil, false

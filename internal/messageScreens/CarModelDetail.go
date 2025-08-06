@@ -10,7 +10,7 @@ type CarModelDetailScreen struct {
 	OutputMessage messageType.OutputMessage
 }
 
-func CarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+func NewCarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	callbackId := dto.Filter["callback_id"]
 	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 
