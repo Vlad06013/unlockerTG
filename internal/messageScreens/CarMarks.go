@@ -25,6 +25,10 @@ func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage boo
 
 	carMarks := s.GetAll(uint(page), uint(pagination))
 
+	if len(carMarks) == 0 {
+		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
+	}
+
 	var controlRow []tgbotapi.InlineKeyboardButton
 	var row []tgbotapi.InlineKeyboardButton
 	var rows [][]tgbotapi.InlineKeyboardButton

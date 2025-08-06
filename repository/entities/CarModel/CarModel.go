@@ -69,7 +69,20 @@ func (r *Storage) GetByMarkId(markId uint64, page uint, pageSize uint) []CarMode
 	var carModels []CarModel
 	offset := int(page) * int(pageSize)
 
-	result := r.Limit(pageSize).Offset(offset).Find(&carModels, "car_mark_id = ?", markId)
+	//result := r.Limit(pageSize).Offset(offset).Find(&carModels, "car_mark_id = ?", markId)
+	result := r.
+		Limit(pageSize).
+		Offset(offset).
+		Where("car_mark_id = ?", markId).
+		Where("name IS NOT NULL").
+		Where("description IS NOT NULL").
+		Where("profile IS NOT NULL").
+		Where("transponder_id IS NOT NULL").
+		Where("prepare_id IS NOT NULL").
+		Where("pult_id IS NOT NULL").
+		Where("programming_id IS NOT NULL").
+		Where("code IS NOT NULL").
+		Find(&carModels)
 
 	if result.Error != nil {
 		log.Fatalf("Ошибка при получении данных: %v", result.Error)
