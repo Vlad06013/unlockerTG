@@ -37,10 +37,6 @@ func checkScreen(callBack *tgbotapi.CallbackQuery, client *TgUser.TgUser, bot tg
 		DB:     db,
 		Filter: filter,
 	}
-	//if client.LastScreen == nil {
-	//	dto.ScreenName = "categories"
-	//	return messageScreens.GetScreen(dto)
-	//}
 	dto.ScreenName = data
 	screen, clearPrevMessage = messageScreens.GetScreen(dto)
 
@@ -55,6 +51,7 @@ func checkScreen(callBack *tgbotapi.CallbackQuery, client *TgUser.TgUser, bot tg
 
 func parseCallBack(callBack *tgbotapi.CallbackQuery) (string, map[string]string) {
 	res := strings.Split(callBack.Data, "|")
+	fmt.Println("callBack " + callBack.Data)
 
 	var filterMap = make(map[string]string)
 	data := res[0]

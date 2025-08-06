@@ -16,12 +16,14 @@ func NewDoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessa
 
 	var buttons [][]tgbotapi.InlineKeyboardButton
 	var keyboard tgbotapi.InlineKeyboardMarkup
+	markId, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 	backBtnCB := "doorLockMarks"
-	doorsLockModels := s.GetByMarkId(1)
+	doorsLockModels := s.GetByMarkId(markId)
+
 	text := "Выберете модель замка"
 
 	if len(doorsLockModels) == 0 {
-		text = "Модели отсутствуют"
+		return NewAlert(dto, "Не найдено.")
 	}
 	rows := make([][]tgbotapi.InlineKeyboardButton, len(doorsLockModels)+1)
 

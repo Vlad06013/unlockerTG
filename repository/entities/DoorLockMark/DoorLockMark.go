@@ -18,7 +18,9 @@ type Storage struct {
 
 func (r *Storage) GetAll() []DoorsLockMark {
 	var doorsLockMarks []DoorsLockMark
-	result := r.Find(&doorsLockMarks)
+	//result := r.Find(&doorsLockMarks)
+
+	result := r.Joins("JOIN doors_lock_models ON doors_lock_models.doors_lock_mark_id = doors_lock_marks.id").Find(&doorsLockMarks)
 
 	if result.Error != nil {
 		// Обработка ошибки

@@ -59,7 +59,8 @@ func (r *Storage) GetById(Id uint64) *CarModel {
 	result := r.Preload("Prepare").Preload("Transponder").Preload("Pult").Preload("Programming").Preload("CarMark").First(&carModel, "id = ?", Id)
 
 	if result.Error != nil {
-		log.Fatalf("Ошибка при получении данных: %v", result.Error)
+		log.Println("Ошибка при получении данных: %v", result.Error)
+		return nil
 	}
 	return &carModel
 }

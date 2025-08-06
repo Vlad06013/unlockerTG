@@ -13,8 +13,31 @@ type DoorLockModelDetailScreen struct {
 }
 
 func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+	var message messageType.OutputMessage
 	s := DoorLockModel.Storage{DB: dto.DB}
-	doorsLockModel := s.GetById(1)
+	modelId, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
+	doorsLockModel := s.GetById(modelId)
+	if doorsLockModel == nil {
+		return NewAlert(dto, "Не найдено.")
+	}
+
+	var text = getTextDoorModel(*doorsLockModel)
+
+	a := Attachment.Storage{DB: dto.DB}
+	attachmentables := a.GetForDoorLockModel(doorsLockModel.ID)
+
+	if len(attachmentables) > 0 {
+		message = sendWithAttachments(attachmentables, dto, text)
+	} else {
+		message = sendText(dto, text)
+	}
+
+	var baseScreenInterface BaseScreen = DoorLockMarksScreen{OutputMessage: message}
+
+	return baseScreenInterface, true
+}
+
+func getTextDoorModel(doorsLockModel DoorLockModel.DoorsLockModel) string {
 
 	iconFalse := "❌"
 	iconTrue := "✅"
@@ -32,7 +55,7 @@ func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrev
 		rods = iconTrue
 	}
 
-	var text = `Название: ` + doorsLockModel.Name + `.
+	return `Название: ` + doorsLockModel.Name + `.
 	Производитель: ` + doorsLockModel.DoorLockMark.Name + `.
 	Тип замка: ` + doorsLockModel.LockType.Name + `.
 	Тип механизма секретности: ` + doorsLockModel.LockMechSecretType.Name + `.
@@ -55,11 +78,10 @@ func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrev
 	Тип ключа: ` + doorsLockModel.KeyType + `.
 	Запирание изнутри: ` + doorsLockModel.LockingFromInside + `.
 	Описание: ` + doorsLockModel.Description + `.`
+}
 
+func sendWithAttachments(attachmentables []Attachment.Attachmentable, dto BaseScreenDTO, text string) messageType.MessageWithImagesGroup {
 	var mediaGroup []interface{}
-
-	a := Attachment.Storage{DB: dto.DB}
-	attachmentables := a.GetForDoorLockModel(doorsLockModel.ID)
 
 	for i, attachmentable := range attachmentables {
 
@@ -72,19 +94,20 @@ func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrev
 		}
 	}
 
-	var message = messageType.MessageWithImagesGroup{
+	return messageType.MessageWithImagesGroup{
 		Bot:    dto.Bot,
 		ChatId: dto.User.TgUserId,
 		Media:  mediaGroup,
 	}
+}
 
-	var screen = DoorLockMarksScreen{
-		OutputMessage: messageType.OutputMessage(message),
+func sendText(dto BaseScreenDTO, text string) messageType.TextMessage {
+
+	return messageType.TextMessage{
+		Text:   text,
+		Bot:    dto.Bot,
+		ChatId: dto.User.TgUserId,
 	}
-
-	var baseScreenInterface BaseScreen = screen
-
-	return baseScreenInterface, false
 }
 
 func (c DoorLockModelDetailScreen) GetOutputMessage() messageType.OutputMessage {

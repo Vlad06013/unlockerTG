@@ -1,6 +1,7 @@
 package DoorLockModel
 
 import (
+	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockMark"
 	"github.com/jinzhu/gorm"
 	"log"
@@ -59,18 +60,19 @@ func (r *Storage) GetById(Id uint64) *DoorsLockModel {
 	result := r.Preload("LockType").Preload("LockMechSecretType").Preload("DoorLockMark").First(&doorsLockModels, "id = ?", Id)
 
 	if result.Error != nil {
-		log.Fatalf("Ошибка при получении данных: %v", result.Error)
+		log.Println("Ошибка при получении данных: %v", result.Error)
+		return nil
 	}
 	return &doorsLockModels
 }
 
 func (r *Storage) GetByMarkId(markId uint64) []DoorsLockModel {
 	var doorsLockModels []DoorsLockModel
-
+	fmt.Print(markId)
 	result := r.Find(&doorsLockModels, "doors_lock_mark_id = ?", markId)
 
 	if result.Error != nil {
-		log.Fatalf("Ошибка при получении данных: %v", result.Error)
+		log.Println("Ошибка при получении данных: %v", result.Error)
 	}
 	return doorsLockModels
 }

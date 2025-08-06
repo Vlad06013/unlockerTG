@@ -19,6 +19,12 @@ func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessag
 	backBtnCB := "categories"
 	doorsLockMarks := s.GetAll()
 
+	var text string
+	if len(doorsLockMarks) == 0 {
+		text = "В процессе заполнения. Обратитесь позже"
+	} else {
+		text = "Выберете производителя замка"
+	}
 	rows := make([][]tgbotapi.InlineKeyboardButton, len(doorsLockMarks)+1)
 
 	for i := 0; i < len(doorsLockMarks); i++ {
@@ -42,7 +48,7 @@ func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessag
 	keyboard = tgbotapi.NewInlineKeyboardMarkup(buttons...)
 
 	var message = messageType.TextWithButtonsMessage{
-		Text:    "Выберете производителя замка",
+		Text:    text,
 		Bot:     dto.Bot,
 		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,

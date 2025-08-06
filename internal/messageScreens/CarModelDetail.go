@@ -11,12 +11,18 @@ type CarModelDetailScreen struct {
 }
 
 func NewCarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
-	callbackId := dto.Filter["callback_id"]
 	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 
 	s := CarModel.Storage{DB: dto.DB}
 	carModel := s.GetById(id)
 
+	if carModel == nil {
+		return NewAlert(dto, "Не найдено.")
+	}
+	return NewAlert(dto, getTextCarModel(*carModel))
+}
+
+func getTextCarModel(carModel CarModel.CarModel) string {
 	iconFalse := "❌"
 	iconTrue := "✅"
 	openInside, openByClockArrowUp := iconFalse, iconFalse
@@ -24,13 +30,12 @@ func NewCarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessa
 	if carModel.OpenByClockArrowUp {
 		openByClockArrowUp = iconTrue
 	}
-
 	if carModel.OpenInside {
 		openInside = iconTrue
 	}
 
 	//max text lenght 200 chars
-	var text = carModel.CarMark.Name + " " + carModel.Name + `
+	return carModel.CarMark.Name + " " + carModel.Name + `
 	Открыть через салон: ` + openInside + `.
 	Открывается по часовой стрелке: ` + openByClockArrowUp + `.
 	Транспондер: ` + carModel.Transponder.Name + `.`
@@ -40,20 +45,6 @@ func NewCarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessa
 	//Код: ` + carModel.Code + `.
 	//Пульт: ` + carModel.Pult.Name + `.`
 	//Описание: ` + carModel.Description + `.`
-
-	var message = messageType.AlertMessage{
-		Text:       text,
-		Bot:        dto.Bot,
-		CallBackID: callbackId,
-	}
-
-	var screen = DoorLockMarksScreen{
-		OutputMessage: messageType.OutputMessage(message),
-	}
-
-	var baseScreenInterface BaseScreen = screen
-
-	return baseScreenInterface, false
 }
 
 func (c CarModelDetailScreen) GetOutputMessage() messageType.OutputMessage {
