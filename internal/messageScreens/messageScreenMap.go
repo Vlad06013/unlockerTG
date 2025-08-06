@@ -25,6 +25,8 @@ func GetScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool)
 		return NewCarModelDetail(dto)
 
 		//COMMANDS
+	case "/start":
+		return NewCategoriesScreen(dto)
 	case "/doorlocks":
 		return NewDoorLockMarks(dto)
 	case "/cars":

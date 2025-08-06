@@ -21,7 +21,7 @@ func CallBackHandler(callBack *tgbotapi.CallbackQuery, db *gorm.DB, bot tgbotapi
 		if client.LastTgMessageId != nil && clearPrevMessage == true {
 			DeleteLastMessage(callBack.From.ID, *client.LastTgMessageId, bot)
 		}
-		SaveLastScreen(s, sentResult.MessageID, client.ID, screen.GetScreenName())
+		SaveLastMessageId(s, sentResult.MessageID, client.ID, screen.GetScreenName())
 	}
 }
 
@@ -37,10 +37,10 @@ func checkScreen(callBack *tgbotapi.CallbackQuery, client *TgUser.TgUser, bot tg
 		DB:     db,
 		Filter: filter,
 	}
-	if client.LastScreen == nil {
-		dto.ScreenName = "categories"
-		return messageScreens.GetScreen(dto)
-	}
+	//if client.LastScreen == nil {
+	//	dto.ScreenName = "categories"
+	//	return messageScreens.GetScreen(dto)
+	//}
 	dto.ScreenName = data
 	screen, clearPrevMessage = messageScreens.GetScreen(dto)
 

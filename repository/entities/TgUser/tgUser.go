@@ -6,14 +6,12 @@ import (
 )
 
 type TgUser struct {
-	ID              uint    `json:"id" gorm:"primary_key;column:id"`
-	TgUserId        int64   `json:"tg_user_id" gorm:"column:tg_user_id;unique"`
-	TgUserName      string  `json:"tg_user_name" gorm:"column:tg_user_name"`
-	LastTgMessageId *int    `json:"last_tg_message_id" gorm:"column:last_tg_message_id"`
-	LastScreen      *string `json:"last_screen" gorm:"column:last_screen"`
-	LastQueryFilter *string `json:"last_query_filter" gorm:"column:last_query_filter"`
-	CreatedAt       string  `json:"created_at" gorm:"column:created_at"`
-	UpdatedAt       string  `json:"updated_at" gorm:"column:updated_at"`
+	ID              uint   `json:"id" gorm:"primary_key;column:id"`
+	TgUserId        int64  `json:"tg_user_id" gorm:"column:tg_user_id;unique"`
+	TgUserName      string `json:"tg_user_name" gorm:"column:tg_user_name"`
+	LastTgMessageId *int   `json:"last_tg_message_id" gorm:"column:last_tg_message_id"`
+	CreatedAt       string `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt       string `json:"updated_at" gorm:"column:updated_at"`
 }
 
 type Storage struct {
@@ -47,8 +45,6 @@ func (r *Storage) CreateClient(tgID int64, name string) *TgUser {
 		TgUserId:        tgID,
 		TgUserName:      name,
 		LastTgMessageId: nil,
-		LastScreen:      nil,
-		LastQueryFilter: nil,
 		CreatedAt:       dateTime,
 		UpdatedAt:       dateTime,
 	}
@@ -58,8 +54,4 @@ func (r *Storage) CreateClient(tgID int64, name string) *TgUser {
 
 func (r *Storage) UpdateLastMessageClient(lastTgMessageId int, clientId uint) {
 	r.Model(&TgUser{}).Where("id =?", clientId).Update("last_tg_message_id", lastTgMessageId)
-}
-
-func (r *Storage) SaveLastScreenWithFilter(screen string, filter *string, clientId uint) {
-	r.Model(&TgUser{}).Where("id =?", clientId).Update("last_screen", screen).Update("last_query_filter", filter)
 }

@@ -19,13 +19,9 @@ func MessageHandler(message *tgbotapi.Message, db *gorm.DB, bot tgbotapi.BotAPI)
 		DB:     db,
 		Filter: nil,
 	}
-	if client.LastScreen == nil || *client.LastScreen == "" {
-		dto.ScreenName = "categories"
-		screen, _ = messageScreens.GetScreen(dto)
-	} else {
-		dto.ScreenName = message.Text
-		screen, _ = messageScreens.GetScreen(dto)
-	}
+
+	dto.ScreenName = message.Text
+	screen, _ = messageScreens.GetScreen(dto)
 
 	if screen == nil {
 		dto.ScreenName = "not_found"
@@ -38,5 +34,5 @@ func MessageHandler(message *tgbotapi.Message, db *gorm.DB, bot tgbotapi.BotAPI)
 	if client.LastTgMessageId != nil {
 		DeleteLastMessage(message.From.ID, *client.LastTgMessageId, bot)
 	}
-	SaveLastScreen(s, sentResult.MessageID, client.ID, screen.GetScreenName())
+	SaveLastMessageId(s, sentResult.MessageID, client.ID, screen.GetScreenName())
 }
