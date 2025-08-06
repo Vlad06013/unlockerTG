@@ -46,7 +46,7 @@ func (r *Storage) GetAll(page uint, pageSize uint) []CarMark {
 }
 func (r *Storage) FindByName(name string) []CarMark {
 	var carMarks []CarMark
-	r.Where("name LIKE ?", "%"+name+"%").Find(&carMarks).Order("name asc")
+	r.Where("name ILIKE ?", "%"+name+"%").Find(&carMarks).Order("name asc")
 
 	return carMarks
 }

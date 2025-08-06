@@ -89,3 +89,10 @@ func (r *Storage) GetByMarkId(markId uint64, page uint, pageSize uint) []CarMode
 	}
 	return carModels
 }
+
+func (r *Storage) FindByName(name string) []CarModel {
+	var carModels []CarModel
+	r.Where("name ILIKE ?", "%"+name+"%").Find(&carModels).Order("name asc")
+
+	return carModels
+}
