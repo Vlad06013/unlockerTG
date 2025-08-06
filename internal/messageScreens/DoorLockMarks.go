@@ -15,9 +15,6 @@ func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessag
 	s := DoorLockMark.Storage{DB: dto.DB}
 
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
-	pagination := 40
-	countInRowOptions := []int{4, 3}
-	rowCountIndex := 0
 
 	var row []tgbotapi.InlineKeyboardButton
 	var rows [][]tgbotapi.InlineKeyboardButton
@@ -30,7 +27,7 @@ func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessag
 	}
 
 	for i := 0; i < len(doorsLockMarks); i++ {
-		callbackData := "doorLockModels|id_" + strconv.FormatUint(doorsLockMarks[i].ID, 10)
+		callbackData := "doorLockModels|doorLockMarkId_" + strconv.FormatUint(doorsLockMarks[i].ID, 10)
 		btnText := doorsLockMarks[i].Name
 		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
 
@@ -65,9 +62,7 @@ func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessag
 		Buttons: keyboard,
 	}
 
-	var screen = DoorLockMarksScreen{
-		OutputMessage: messageType.OutputMessage(message),
-	}
+	var screen = DoorLockMarksScreen{OutputMessage: messageType.OutputMessage(message)}
 
 	var baseScreenInterface BaseScreen = screen
 

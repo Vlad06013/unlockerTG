@@ -15,7 +15,7 @@ func NewAlert(dto BaseScreenDTO, text string) (baseScreen BaseScreen, clearPrevM
 		Bot:        dto.Bot,
 		CallBackID: dto.Filter["callback_id"],
 	}
-	var baseScreenInterface BaseScreen = DoorLockMarksScreen{OutputMessage: message}
+	var baseScreenInterface BaseScreen = NotFoundAlert{OutputMessage: message}
 	return baseScreenInterface, false
 
 }
@@ -25,5 +25,5 @@ func (c NotFoundAlert) GetOutputMessage() messageType.OutputMessage {
 }
 
 func (c NotFoundAlert) GetScreenName() string {
-	return "not_found_alert"
+	return "alert"
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/UpdateHandlers"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/Setting"
+	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jinzhu/gorm"
 	"log"
@@ -25,12 +26,16 @@ func Listen(db *gorm.DB) {
 	u.Timeout = 60
 
 	updates := botApi.GetUpdatesChan(u)
+	UpdateHandlers.Bot = *botApi
+	UpdateHandlers.DbConnection = db
+	UpdateHandlers.UserStorage = TgUser.Storage{DB: db}
+
 	for update := range updates {
 		if update.Message != nil {
-			UpdateHandlers.MessageHandler(update.Message, db, *botApi)
+			UpdateHandlers.MessageHandler(update.Message)
 		}
 		if update.CallbackQuery != nil {
-			UpdateHandlers.CallBackHandler(update.CallbackQuery, db, *botApi)
+			UpdateHandlers.CallBackHandler(update.CallbackQuery)
 		}
 		if update.MyChatMember != nil {
 			fmt.Println(update.MyChatMember)

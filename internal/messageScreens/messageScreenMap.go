@@ -1,6 +1,7 @@
 package messageScreens
 
 func GetScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
+
 	switch dto.ScreenName {
 
 	case "categories":

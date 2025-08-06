@@ -3,56 +3,79 @@ package UpdateHandlers
 import (
 	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/internal/messageScreens"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
+	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockModel"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/jinzhu/gorm"
+	"strconv"
 	"strings"
 )
 
-func CallBackHandler(callBack *tgbotapi.CallbackQuery, db *gorm.DB, bot tgbotapi.BotAPI) {
-	s := TgUser.Storage{DB: db}
-	client := s.InitClient(callBack.From.ID, callBack.From.UserName)
+func CallBackHandler(callBack *tgbotapi.CallbackQuery) {
+	fmt.Println(callBack.Data)
+	client = UserStorage.InitClient(callBack.From.ID, callBack.From.UserName)
+	var screen, clearPrevMessage = checkScreen(callBack)
+	var sentResult = screen.GetOutputMessage().Send()
 
-	var screen, clearPrevMessage = checkScreen(callBack, client, bot, db)
+	if client.LastTgMessageId != nil && clearPrevMessage == true {
+		DeleteLastMessage(callBack.From.ID, *client.LastTgMessageId)
+	}
+	SaveLastMessageId(sentResult.MessageID, client.ID)
+	checkNeedAdditionalMessage()
+}
 
-	if screen != nil {
-		var sentResult = screen.GetOutputMessage().Send()
+func checkNeedAdditionalMessage() {
+	fmt.Println(screenName)
 
-		if client.LastTgMessageId != nil && clearPrevMessage == true {
-			DeleteLastMessage(callBack.From.ID, *client.LastTgMessageId, bot)
+	if screenName == "doorLockModelsDetail" {
+		doorLockModelId, _ := strconv.ParseUint(filterMap["id"], 10, 32)
+
+		s := DoorLockModel.Storage{DB: DbConnection}
+		doorLockModel := s.GetById(doorLockModelId)
+
+		filter := map[string]string{
+			"doorLockMarkId": strconv.FormatUint(doorLockModel.DoorLockMarkId, 10),
 		}
-		SaveLastMessageId(s, sentResult.MessageID, client.ID, screen.GetScreenName())
+		dto := messageScreens.BaseScreenDTO{
+			User:       *client,
+			Bot:        Bot,
+			DB:         DbConnection,
+			ScreenName: "doorLockModels",
+			Filter:     filter,
+		}
+
+		screenDoorLockModels, _ := messageScreens.GetScreen(dto)
+
+		var sentResult = screenDoorLockModels.GetOutputMessage().Send()
+		SaveLastMessageId(sentResult.MessageID, client.ID)
 	}
 }
 
-func checkScreen(callBack *tgbotapi.CallbackQuery, client *TgUser.TgUser, bot tgbotapi.BotAPI, db *gorm.DB) (baseScreen messageScreens.BaseScreen, clearPrevMessage bool) {
+func checkScreen(callBack *tgbotapi.CallbackQuery) (baseScreen messageScreens.BaseScreen, clearPrevMessage bool) {
 
-	dataParsed, filter := parseCallBack(callBack)
-	data := dataParsed
+	setFilterFromCallBack(callBack)
+
 	var screen messageScreens.BaseScreen = nil
 
 	dto := messageScreens.BaseScreenDTO{
-		User:   *client,
-		Bot:    bot,
-		DB:     db,
-		Filter: filter,
+		User:       *client,
+		Bot:        Bot,
+		DB:         DbConnection,
+		Filter:     filterMap,
+		ScreenName: screenName,
 	}
-	dto.ScreenName = data
+
 	screen, clearPrevMessage = messageScreens.GetScreen(dto)
 
 	if screen == nil {
 		dto.ScreenName = "not_found"
 		screen, clearPrevMessage = messageScreens.GetScreen(dto)
-		fmt.Println("Не найден экран " + data)
+		fmt.Println("Не найден экран " + screenName)
 	}
 
 	return screen, clearPrevMessage
 }
 
-func parseCallBack(callBack *tgbotapi.CallbackQuery) (string, map[string]string) {
+func setFilterFromCallBack(callBack *tgbotapi.CallbackQuery) {
 	res := strings.Split(callBack.Data, "|")
-
-	var filterMap = make(map[string]string)
 	data := res[0]
 
 	if len(res) > 1 {
@@ -62,6 +85,5 @@ func parseCallBack(callBack *tgbotapi.CallbackQuery) (string, map[string]string)
 		}
 	}
 	filterMap["callback_id"] = callBack.ID
-
-	return data, filterMap
+	screenName = data
 }

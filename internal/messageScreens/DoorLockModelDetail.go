@@ -32,7 +32,7 @@ func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrev
 		message = messageText(dto, text)
 	}
 
-	var baseScreenInterface BaseScreen = DoorLockMarksScreen{OutputMessage: message}
+	var baseScreenInterface BaseScreen = DoorLockModelDetailScreen{OutputMessage: message}
 
 	return baseScreenInterface, true
 }

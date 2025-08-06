@@ -14,9 +14,6 @@ type CarMarksScreen struct {
 func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
-	pagination := 42
-	countInRowOptions := []int{4, 3}
-	rowCountIndex := 0
 
 	var row []tgbotapi.InlineKeyboardButton
 	var rows [][]tgbotapi.InlineKeyboardButton
@@ -65,10 +62,7 @@ func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage boo
 		Buttons: keyboard,
 	}
 
-	var screen = DoorLockMarksScreen{
-		OutputMessage: messageType.OutputMessage(message),
-	}
-
+	var screen = CarMarksScreen{OutputMessage: messageType.OutputMessage(message)}
 	var baseScreenInterface BaseScreen = screen
 
 	return baseScreenInterface, true

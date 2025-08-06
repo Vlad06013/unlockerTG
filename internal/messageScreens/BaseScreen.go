@@ -5,7 +5,6 @@ import (
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/TgUser"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jinzhu/gorm"
-	"strconv"
 )
 
 type BaseScreen interface {
@@ -27,24 +26,4 @@ type PaginationDTO struct {
 	CallBack        string
 	BackButtonData  string
 	BackButtonText  string
-}
-
-func getControlPanel(dto PaginationDTO) []tgbotapi.InlineKeyboardButton {
-
-	var controlRow []tgbotapi.InlineKeyboardButton
-
-	backBtn := tgbotapi.NewInlineKeyboardButtonData(dto.BackButtonText, dto.BackButtonData)
-	nextPageBtn := tgbotapi.NewInlineKeyboardButtonData(">>", dto.CallBack+"|page_"+strconv.FormatUint(dto.Page+1, 10))
-	previousPageBtn := tgbotapi.NewInlineKeyboardButtonData("<<", dto.CallBack+"|page_"+strconv.FormatUint(dto.Page-1, 10))
-
-	if dto.Page > 0 {
-		controlRow = append(controlRow, previousPageBtn)
-	}
-
-	controlRow = append(controlRow, backBtn)
-
-	if dto.QueryCount == dto.PaginationCount {
-		controlRow = append(controlRow, nextPageBtn)
-	}
-	return controlRow
 }
