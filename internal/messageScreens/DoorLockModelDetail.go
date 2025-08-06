@@ -27,9 +27,9 @@ func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrev
 	attachmentables := a.GetForDoorLockModel(doorsLockModel.ID)
 
 	if len(attachmentables) > 0 {
-		message = sendWithAttachments(attachmentables, dto, text)
+		message = messageWithAttachments(attachmentables, dto, text)
 	} else {
-		message = sendText(dto, text)
+		message = messageText(dto, text)
 	}
 
 	var baseScreenInterface BaseScreen = DoorLockMarksScreen{OutputMessage: message}
@@ -80,7 +80,7 @@ func getTextDoorModel(doorsLockModel DoorLockModel.DoorsLockModel) string {
 	Описание: ` + doorsLockModel.Description + `.`
 }
 
-func sendWithAttachments(attachmentables []Attachment.Attachmentable, dto BaseScreenDTO, text string) messageType.MessageWithImagesGroup {
+func messageWithAttachments(attachmentables []Attachment.Attachmentable, dto BaseScreenDTO, text string) messageType.MessageWithImagesGroup {
 	var mediaGroup []interface{}
 
 	for i, attachmentable := range attachmentables {
@@ -101,7 +101,7 @@ func sendWithAttachments(attachmentables []Attachment.Attachmentable, dto BaseSc
 	}
 }
 
-func sendText(dto BaseScreenDTO, text string) messageType.TextMessage {
+func messageText(dto BaseScreenDTO, text string) messageType.TextMessage {
 
 	return messageType.TextMessage{
 		Text:   text,
