@@ -8,7 +8,6 @@ import (
 )
 
 func CallBackHandler(callBack *tgbotapi.CallbackQuery) {
-	fmt.Println(callBack.Data)
 	client = UserStorage.InitClient(callBack.From.ID, callBack.From.UserName)
 	var screen, clearPrevMessage = checkScreen(callBack)
 	var sentResult = screen.GetOutputMessage().Send()
