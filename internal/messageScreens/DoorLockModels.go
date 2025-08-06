@@ -14,7 +14,8 @@ type DoorLockModelsScreen struct {
 func NewDoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
 	pagination := 40
-	countInRow := 4
+	countInRowOptions := []int{4, 3}
+	rowCountIndex := 0
 
 	s := DoorLockModel.Storage{DB: dto.DB}
 
@@ -36,9 +37,13 @@ func NewDoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessa
 
 		row = append(row, button)
 
-		if (i+1)%countInRow == 0 || i == len(doorsLockModels)-1 {
+		currentCountInRow := countInRowOptions[rowCountIndex]
+
+		if (len(row) == currentCountInRow) || i == len(doorsLockModels)-1 {
 			rows = append(rows, row)
 			row = nil
+
+			rowCountIndex = (rowCountIndex + 1) % len(countInRowOptions)
 		}
 	}
 

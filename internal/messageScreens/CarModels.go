@@ -14,8 +14,9 @@ type CarModelsScreen struct {
 func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
-	pagination := 10
-	countInRow := 4
+	pagination := 42
+	countInRowOptions := []int{4, 3}
+	rowCountIndex := 0
 
 	var row []tgbotapi.InlineKeyboardButton
 	var rows [][]tgbotapi.InlineKeyboardButton
@@ -25,7 +26,7 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 	carModels := s.GetByMarkId(id, uint(page), uint(pagination))
 
 	if len(carModels) == 0 {
-		return NewAlert(dto, "Не найдено.")
+		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
 	}
 
 	for i := 0; i < len(carModels); i++ {
@@ -35,10 +36,13 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
 
 		row = append(row, button)
+		currentCountInRow := countInRowOptions[rowCountIndex]
 
-		if (i+1)%countInRow == 0 || i == len(carModels)-1 {
+		if (len(row) == currentCountInRow) || i == len(carModels)-1 {
 			rows = append(rows, row)
 			row = nil
+
+			rowCountIndex = (rowCountIndex + 1) % len(countInRowOptions)
 		}
 	}
 
