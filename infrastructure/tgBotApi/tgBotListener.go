@@ -23,67 +23,9 @@ func Listen(db *gorm.DB) {
 	for update := range updates {
 		if update.Message != nil {
 			UpdateHandlers.MessageHandler(update.Message, db, *botApi)
-
-			//fmt.Println(update.Message.Text)
-			//var message = messageType.TextMessage{
-			//	Text:   update.Message.Text,
-			//	Bot:    *botApi,
-			//	ChatId: update.Message.Chat.ID,
-			//}
-			//s := "1"
-			//var keyboard tgbotapi.InlineKeyboardMarkup
-			//rows := make([][]tgbotapi.InlineKeyboardButton, 2)
-			//rows[0] = tgbotapi.NewInlineKeyboardRow(
-			//	tgbotapi.InlineKeyboardButton{
-			//		Text:         "Добавить новый домен",
-			//		CallbackData: &s,
-			//	},
-			//	tgbotapi.InlineKeyboardButton{
-			//		Text:         "В кабинет",
-			//		CallbackData: &s,
-			//	},
-			//)
-			//rows[1] = tgbotapi.NewInlineKeyboardRow(
-			//	tgbotapi.InlineKeyboardButton{
-			//		Text:         "Добавить новый домен",
-			//		CallbackData: &s,
-			//	},
-			//	tgbotapi.InlineKeyboardButton{
-			//		Text:         "В кабинет",
-			//		CallbackData: &s,
-			//	},
-			//)
-			//keyboard = tgbotapi.NewInlineKeyboardMarkup(rows...)
-			//var message = messageType.TextWithButtonsMessage{
-			//	Text:    update.Message.Text,
-			//	Bot:     *botApi,
-			//	ChatId:  update.Message.Chat.ID,
-			//	Buttons: keyboard,
-			//}
-			//var message = messageType.AlertMessage{
-			//	Text:   update.Message.Text,
-			//	Bot:    *botApi,
-			//	CallBackID: update.Message.Chat.ID,
-			//}
-			//var output OutputMessage = message
-			//output.Send()
-			//TextMessage(update.Message, *botApi, conn)
 		}
 		if update.CallbackQuery != nil {
-			//fmt.Println(update.CallbackQuery)
-
 			UpdateHandlers.CallBackHandler(update.CallbackQuery, db, *botApi)
-
-			//var message = messageType.AlertMessage{
-			//	Text:       "ssss",
-			//	Bot:        *botApi,
-			//	CallBackID: update.CallbackQuery.ID,
-			//}
-			//var output messageType.OutputMessage = message
-			//output.Send()
-
-			//CallBackQuery(update.CallbackQuery, *botApi, conn)
-			//bu.CallbackQueryMessageHandler(bot, update.CallbackQuery)
 		}
 		if update.MyChatMember != nil {
 			//fmt.Println(update.MyChatMember)

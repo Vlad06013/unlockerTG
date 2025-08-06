@@ -10,17 +10,15 @@ type TextWithButtonsMessage struct {
 	Bot     tgbotapi.BotAPI
 	ChatId  int64
 	Buttons tgbotapi.InlineKeyboardMarkup
-	Screen  string
 }
 
 func (t TextWithButtonsMessage) Send() tgbotapi.Message {
 
 	msg := tgbotapi.NewMessage(t.ChatId, t.Text)
 	msg.ParseMode = "HTML"
-	buttons := t.Buttons
 
-	if len(buttons.InlineKeyboard) != 0 {
-		msg.ReplyMarkup = buttons
+	if len(t.Buttons.InlineKeyboard) != 0 {
+		msg.ReplyMarkup = t.Buttons
 	}
 	res, err := t.Bot.Send(msg)
 	if err != nil {

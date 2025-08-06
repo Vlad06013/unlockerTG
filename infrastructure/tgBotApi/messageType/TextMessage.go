@@ -9,7 +9,6 @@ type TextMessage struct {
 	Text   string
 	Bot    tgbotapi.BotAPI
 	ChatId int64
-	Screen string
 }
 
 func (t TextMessage) Send() tgbotapi.Message {

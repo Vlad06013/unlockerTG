@@ -15,7 +15,6 @@ func CallBackHandler(callBack *tgbotapi.CallbackQuery, db *gorm.DB, bot tgbotapi
 
 	var screen, clearPrevMessage = checkScreen(callBack, client, bot, db)
 
-	fmt.Println(clearPrevMessage, *client.LastTgMessageId, *client.LastScreen)
 	if screen != nil {
 		var sentResult = screen.GetOutputMessage().Send()
 

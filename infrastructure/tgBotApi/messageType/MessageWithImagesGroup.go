@@ -9,7 +9,6 @@ type MessageWithImagesGroup struct {
 	Text   string
 	Bot    tgbotapi.BotAPI
 	ChatId int64
-	Screen string
 	Media  []interface{}
 }
 
