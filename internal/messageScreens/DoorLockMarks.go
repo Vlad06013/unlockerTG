@@ -13,12 +13,7 @@ type DoorLockMarksScreen struct {
 
 func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	s := DoorLockMark.Storage{DB: dto.DB}
-
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
-
-	var row []tgbotapi.InlineKeyboardButton
-	var rows [][]tgbotapi.InlineKeyboardButton
-	var keyboard tgbotapi.InlineKeyboardMarkup
 
 	doorsLockMarks := s.GetAll(uint(page), uint(pagination))
 
@@ -26,21 +21,13 @@ func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessag
 		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
 	}
 
-	for i := 0; i < len(doorsLockMarks); i++ {
-		callbackData := "doorLockModels|doorLockMarkId_" + strconv.FormatUint(doorsLockMarks[i].ID, 10)
-		btnText := doorsLockMarks[i].Name
-		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
-
-		row = append(row, button)
-		currentCountInRow := countInRowOptions[rowCountIndex]
-
-		if (len(row) == currentCountInRow) || i == len(doorsLockMarks)-1 {
-			rows = append(rows, row)
-			row = nil
-
-			rowCountIndex = (rowCountIndex + 1) % len(countInRowOptions)
-		}
+	bcDTO := ButtonConstructorDTO{
+		FieldForText:     "Name",
+		PrefixCallback:   "doorLockModels|doorLockMarkId",
+		FieldForCallback: "ID",
+		Entities:         doorsLockMarks,
 	}
+	rows := GenerateButtons(bcDTO)
 
 	paginationDto := PaginationDTO{
 		Page:            page,

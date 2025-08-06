@@ -1,5 +1,10 @@
 package messageScreens
 
+import (
+	"fmt"
+	"github.com/Vlad06013/unlockerTG.git/internal/SearchModule"
+)
+
 func GetScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 
 	switch dto.ScreenName {
@@ -32,7 +37,14 @@ func GetScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool)
 		return NewDoorLockMarks(dto)
 	case "/cars":
 		return NewCarMarks(dto)
-
 	}
+	findByText(dto.ScreenName, dto)
 	return nil, false
+}
+
+func findByText(screenName string, dto BaseScreenDTO) {
+	SearchModule.SearchString = screenName
+	SearchModule.DbConnection = dto.DB
+	findResult := SearchModule.Find()
+	fmt.Println(findResult)
 }

@@ -13,7 +13,6 @@ func NewCategoriesScreen(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMes
 	cars := "carMarks"
 	doors := "doorLockMarks"
 
-	var keyboard tgbotapi.InlineKeyboardMarkup
 	rows := make([][]tgbotapi.InlineKeyboardButton, 1)
 
 	rows[0] = tgbotapi.NewInlineKeyboardRow(

@@ -17,32 +17,19 @@ func NewDoorLockModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessa
 
 	s := DoorLockModel.Storage{DB: dto.DB}
 
-	var row []tgbotapi.InlineKeyboardButton
-	var rows [][]tgbotapi.InlineKeyboardButton
-	var keyboard tgbotapi.InlineKeyboardMarkup
-
 	doorsLockModels := s.GetByMarkId(markId, uint(page), uint(pagination))
 
 	if len(doorsLockModels) == 0 {
 		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
 	}
 
-	for i := 0; i < len(doorsLockModels); i++ {
-		callbackData := "doorLockModelsDetail|id_" + strconv.FormatUint(uint64(doorsLockModels[i].ID), 10)
-		btnText := doorsLockModels[i].Name
-		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
-
-		row = append(row, button)
-
-		currentCountInRow := countInRowOptions[rowCountIndex]
-
-		if (len(row) == currentCountInRow) || i == len(doorsLockModels)-1 {
-			rows = append(rows, row)
-			row = nil
-
-			rowCountIndex = (rowCountIndex + 1) % len(countInRowOptions)
-		}
+	bcDTO := ButtonConstructorDTO{
+		FieldForText:     "Name",
+		PrefixCallback:   "doorLockModelsDetail|id",
+		FieldForCallback: "ID",
+		Entities:         doorsLockModels,
 	}
+	rows := GenerateButtons(bcDTO)
 
 	paginationDto := PaginationDTO{
 		Page:            page,

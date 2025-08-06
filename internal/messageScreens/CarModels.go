@@ -15,10 +15,6 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
 
-	var row []tgbotapi.InlineKeyboardButton
-	var rows [][]tgbotapi.InlineKeyboardButton
-	var keyboard tgbotapi.InlineKeyboardMarkup
-
 	s := CarModel.Storage{DB: dto.DB}
 	carModels := s.GetByMarkId(id, uint(page), uint(pagination))
 
@@ -26,22 +22,13 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
 	}
 
-	for i := 0; i < len(carModels); i++ {
-		callbackData := "carModelDetail|id_" + strconv.FormatUint(carModels[i].ID, 10)
-
-		btnText := carModels[i].Name
-		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
-
-		row = append(row, button)
-		currentCountInRow := countInRowOptions[rowCountIndex]
-
-		if (len(row) == currentCountInRow) || i == len(carModels)-1 {
-			rows = append(rows, row)
-			row = nil
-
-			rowCountIndex = (rowCountIndex + 1) % len(countInRowOptions)
-		}
+	bcDTO := ButtonConstructorDTO{
+		FieldForText:     "Name",
+		PrefixCallback:   "carModelDetail|id",
+		FieldForCallback: "ID",
+		Entities:         carModels,
 	}
+	rows := GenerateButtons(bcDTO)
 
 	paginationDto := PaginationDTO{
 		Page:            page,
