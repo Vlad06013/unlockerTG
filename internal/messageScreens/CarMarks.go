@@ -15,11 +15,10 @@ func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage boo
 
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
 	pagination := 40
+	countInRow := 4
 
-	backBtn := tgbotapi.NewInlineKeyboardButtonData("Назад", "categories")
-	nextPageBtn := tgbotapi.NewInlineKeyboardButtonData(">>", "carMarks|page_"+strconv.FormatUint(uint64(page+1), 10))
-	previousPageBtn := tgbotapi.NewInlineKeyboardButtonData("<<", "carMarks|page_"+strconv.FormatUint(uint64(page-1), 10))
-
+	var row []tgbotapi.InlineKeyboardButton
+	var rows [][]tgbotapi.InlineKeyboardButton
 	var keyboard tgbotapi.InlineKeyboardMarkup
 	s := CarMark.Storage{DB: dto.DB}
 
@@ -29,13 +28,8 @@ func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage boo
 		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
 	}
 
-	var controlRow []tgbotapi.InlineKeyboardButton
-	var row []tgbotapi.InlineKeyboardButton
-	var rows [][]tgbotapi.InlineKeyboardButton
-	countInRow := 4
-
 	for i := 0; i < len(carMarks); i++ {
-		callbackData := "carModels|id_" + strconv.FormatUint(uint64(carMarks[i].ID), 10)
+		callbackData := "carModels|id_" + strconv.FormatUint(carMarks[i].ID, 10)
 		btnText := carMarks[i].Name
 		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
 
@@ -46,17 +40,17 @@ func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage boo
 			row = nil
 		}
 	}
-	if page > 0 {
-		controlRow = append(controlRow, previousPageBtn)
+
+	paginationDto := PaginationDTO{
+		Page:            page,
+		QueryCount:      len(carMarks),
+		PaginationCount: pagination,
+		CallBack:        "carMarks",
+		BackButtonData:  "categories",
+		BackButtonText:  "Назад",
 	}
 
-	controlRow = append(controlRow, backBtn)
-
-	if len(carMarks) == pagination {
-		controlRow = append(controlRow, nextPageBtn)
-	}
-
-	rows = append(rows, controlRow)
+	rows = append(rows, getControlPanel(paginationDto))
 	keyboard = tgbotapi.NewInlineKeyboardMarkup(rows...)
 
 	var message = messageType.TextWithButtonsMessage{

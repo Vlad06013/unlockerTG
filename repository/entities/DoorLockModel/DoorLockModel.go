@@ -1,7 +1,6 @@
 package DoorLockModel
 
 import (
-	"fmt"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockMark"
 	"github.com/jinzhu/gorm"
 	"log"
@@ -66,10 +65,35 @@ func (r *Storage) GetById(Id uint64) *DoorsLockModel {
 	return &doorsLockModels
 }
 
-func (r *Storage) GetByMarkId(markId uint64) []DoorsLockModel {
+func (r *Storage) GetByMarkId(markId uint64, page uint, pageSize uint) []DoorsLockModel {
 	var doorsLockModels []DoorsLockModel
-	fmt.Print(markId)
-	result := r.Find(&doorsLockModels, "doors_lock_mark_id = ?", markId)
+	offset := int(page) * int(pageSize)
+	//result := r.Find(&doorsLockModels, "doors_lock_mark_id = ?", markId)
+
+	result := r.
+		Limit(pageSize).
+		Offset(offset).
+		Where("doors_lock_mark_id = ?", markId).
+		Where("name IS NOT NULL").
+		Where("lock_type_id IS NOT NULL").
+		Where("lock_mech_secret_type_id IS NOT NULL").
+		Where("secret_type IS NOT NULL").
+		Where("resistance_class IS NOT NULL").
+		Where("center_distance IS NOT NULL").
+		Where("backset IS NOT NULL").
+		Where("end_strip_length IS NOT NULL").
+		Where("center_distance_fastenings IS NOT NULL").
+		Where("crossbar_diameter IS NOT NULL").
+		Where("deadbolt_overhang IS NOT NULL").
+		Where("overhang_count IS NOT NULL").
+		Where("body_height IS NOT NULL").
+		Where("case_depth IS NOT NULL").
+		Where("width_depth IS NOT NULL").
+		Where("locking_from_inside IS NOT NULL").
+		Where("key_type IS NOT NULL").
+		Where("description IS NOT NULL").
+		Order("name asc").
+		Find(&doorsLockModels)
 
 	if result.Error != nil {
 		log.Println("Ошибка при получении данных: %v", result.Error)

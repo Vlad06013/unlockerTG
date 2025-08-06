@@ -14,41 +14,48 @@ type DoorLockMarksScreen struct {
 func NewDoorLockMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	s := DoorLockMark.Storage{DB: dto.DB}
 
-	var buttons [][]tgbotapi.InlineKeyboardButton
-	var keyboard tgbotapi.InlineKeyboardMarkup
-	backBtnCB := "categories"
-	doorsLockMarks := s.GetAll()
+	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
+	pagination := 40
+	countInRow := 4
 
-	var text string
+	var row []tgbotapi.InlineKeyboardButton
+	var rows [][]tgbotapi.InlineKeyboardButton
+	var keyboard tgbotapi.InlineKeyboardMarkup
+
+	doorsLockMarks := s.GetAll(uint(page), uint(pagination))
+
 	if len(doorsLockMarks) == 0 {
-		text = "В процессе заполнения. Обратитесь позже"
-	} else {
-		text = "Выберете производителя замка"
+		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")
 	}
-	rows := make([][]tgbotapi.InlineKeyboardButton, len(doorsLockMarks)+1)
 
 	for i := 0; i < len(doorsLockMarks); i++ {
-		callbackData := "doorLockModels|id_" + strconv.FormatUint(uint64(doorsLockMarks[i].ID), 10)
+		callbackData := "doorLockModels|id_" + strconv.FormatUint(doorsLockMarks[i].ID, 10)
 		btnText := doorsLockMarks[i].Name
+		button := tgbotapi.NewInlineKeyboardButtonData(btnText, callbackData)
 
-		rows[i] = tgbotapi.NewInlineKeyboardRow(tgbotapi.InlineKeyboardButton{
-			Text:         btnText,
-			CallbackData: &callbackData,
-		})
+		row = append(row, button)
+
+		if (i+1)%countInRow == 0 || i == len(doorsLockMarks)-1 {
+			rows = append(rows, row)
+			row = nil
+		}
 	}
-	rows[len(doorsLockMarks)] = tgbotapi.NewInlineKeyboardRow(
-		tgbotapi.InlineKeyboardButton{
-			Text:         "Назад",
-			CallbackData: &backBtnCB,
-		},
-	)
 
-	buttons = rows
+	paginationDto := PaginationDTO{
+		Page:            page,
+		QueryCount:      len(doorsLockMarks),
+		PaginationCount: pagination,
+		CallBack:        "doorLockMarks",
+		BackButtonData:  "categories",
+		BackButtonText:  "Назад",
+	}
 
-	keyboard = tgbotapi.NewInlineKeyboardMarkup(buttons...)
+	rows = append(rows, getControlPanel(paginationDto))
+
+	keyboard = tgbotapi.NewInlineKeyboardMarkup(rows...)
 
 	var message = messageType.TextWithButtonsMessage{
-		Text:    text,
+		Text:    "Выберете производителя замка",
 		Bot:     dto.Bot,
 		ChatId:  dto.User.TgUserId,
 		Buttons: keyboard,

@@ -42,7 +42,16 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 		}
 	}
 
-	rows = append(rows, getControlPanel(page, len(carModels), pagination, id))
+	paginationDto := PaginationDTO{
+		Page:            page,
+		QueryCount:      len(carModels),
+		PaginationCount: pagination,
+		CallBack:        "carModels|id_" + strconv.FormatUint(id, 10),
+		BackButtonData:  "carMarks",
+		BackButtonText:  "Назад",
+	}
+
+	rows = append(rows, getControlPanel(paginationDto))
 	keyboard = tgbotapi.NewInlineKeyboardMarkup(rows...)
 
 	var message = messageType.TextWithButtonsMessage{
@@ -55,26 +64,6 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 	var baseScreenInterface BaseScreen = DoorLockMarksScreen{OutputMessage: messageType.OutputMessage(message)}
 
 	return baseScreenInterface, true
-}
-
-func getControlPanel(page uint64, len int, pagination int, idCarMark uint64) []tgbotapi.InlineKeyboardButton {
-
-	var controlRow []tgbotapi.InlineKeyboardButton
-
-	backBtn := tgbotapi.NewInlineKeyboardButtonData("Назад", "carMarks")
-	nextPageBtn := tgbotapi.NewInlineKeyboardButtonData(">>", "carModels|id_"+strconv.FormatUint(uint64(idCarMark), 10)+"|page_"+strconv.FormatUint(uint64(page+1), 10))
-	previousPageBtn := tgbotapi.NewInlineKeyboardButtonData("<<", "carModels|id_"+strconv.FormatUint(uint64(idCarMark), 10)+"|page_"+strconv.FormatUint(uint64(page-1), 10))
-
-	if page > 0 {
-		controlRow = append(controlRow, previousPageBtn)
-	}
-
-	controlRow = append(controlRow, backBtn)
-
-	if len == pagination {
-		controlRow = append(controlRow, nextPageBtn)
-	}
-	return controlRow
 }
 
 func (c CarModelsScreen) GetOutputMessage() messageType.OutputMessage {
