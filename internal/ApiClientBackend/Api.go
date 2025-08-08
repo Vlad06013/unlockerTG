@@ -13,6 +13,8 @@ type ApiResponse struct {
 var url = "http://127.0.0.1/api/telegram-bot/v1/"
 
 func send(uri string) (response *http.Response, err error) {
+	fmt.Println("отправка запроса:", url+uri)
+
 	resp, err := http.Get(url + uri)
 	if err != nil {
 		fmt.Println("Ошибка при отправке запроса:", err)

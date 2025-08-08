@@ -13,8 +13,8 @@ type CarModelDetailScreen struct {
 func NewCarModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 
-	s := CarModel.Storage{DB: dto.DB}
-	carModel := s.GetById(id)
+	//s := CarModel.Storage{DB: dto.DB}
+	carModel := CarModel.GetById(id)
 
 	if carModel == nil {
 		return NewAlert(dto, "Не найдено.")
@@ -35,10 +35,10 @@ func getTextCarModel(carModel CarModel.CarModel) string {
 	}
 
 	//max text lenght 200 chars
-	return carModel.CarMark.Name + " " + carModel.Name + `
+	return carModel.Name + `
 	Открыть через салон: ` + openInside + `.
 	Открывается по часовой стрелке: ` + openByClockArrowUp + `.
-	Транспондер: ` + carModel.Transponder.Name + `.`
+	Транспондер: ` + carModel.Transponder + `.`
 	//Профиль: ` + carModel.Profile + `.
 	//Подготовка: ` + carModel.Prepare.Name + `.
 	//Программирование: ` + carModel.Programming.Name + `.

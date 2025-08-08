@@ -14,10 +14,7 @@ type CarMarksScreen struct {
 func NewCarMarks(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bool) {
 
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
-
-	s := CarMark.Storage{DB: dto.DB}
-
-	carMarks := s.GetAll(uint(page), uint(pagination))
+	carMarks := CarMark.GetAll(uint(page), uint(pagination))
 
 	bcDTO := ButtonConstructorDTO{
 		FieldForText:     "Name",

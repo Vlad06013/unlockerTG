@@ -15,8 +15,8 @@ func NewCarModels(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrevMessage bo
 	id, _ := strconv.ParseUint(dto.Filter["id"], 10, 32)
 	page, _ := strconv.ParseUint(dto.Filter["page"], 10, 32)
 
-	s := CarModel.Storage{DB: dto.DB}
-	carModels := s.GetByMarkId(id, uint(page), uint(pagination))
+	//s := CarModel.Storage{DB: dto.DB}
+	carModels := CarModel.GetByMarkId(id, uint(page), uint(pagination))
 
 	if len(carModels) == 0 {
 		return NewAlert(dto, "В процессе заполнения. Попробуйте позже")

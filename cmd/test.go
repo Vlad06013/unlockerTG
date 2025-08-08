@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"github.com/Vlad06013/unlockerTG.git/repository/entities/CarModel"
+)
+
 func main() {
 	//// URL API
 	//url := "http://127.0.0.1/api/telegram-bot/v1/car-marks?limit=2&page=3"
@@ -30,7 +35,7 @@ func main() {
 	//	fmt.Printf("ID: %d, Name: %s\n", item.ID, item.Name)
 	//}
 
-	//s := ApiClientBackend.GetCarMarks()
-	//fmt.Println("carMarks", s)
+	s := CarModel.GetByMarkId(1, 1, 2)
+	fmt.Println("APIRESP", s)
 
 }

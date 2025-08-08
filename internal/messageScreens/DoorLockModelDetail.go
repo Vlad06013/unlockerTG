@@ -2,9 +2,7 @@ package messageScreens
 
 import (
 	"github.com/Vlad06013/unlockerTG.git/infrastructure/tgBotApi/messageType"
-	"github.com/Vlad06013/unlockerTG.git/repository/entities/Attachment"
 	"github.com/Vlad06013/unlockerTG.git/repository/entities/DoorLockModel"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"strconv"
 )
 
@@ -23,14 +21,14 @@ func NewDoorLockModelDetail(dto BaseScreenDTO) (baseScreen BaseScreen, clearPrev
 
 	var text = getTextDoorModel(*doorsLockModel)
 
-	a := Attachment.Storage{DB: dto.DB}
-	attachmentables := a.GetForDoorLockModel(doorsLockModel.ID)
+	//a := Attachment.Storage{DB: dto.DB}
+	//attachmentables := a.GetForDoorLockModel(doorsLockModel.ID)
 
-	if len(attachmentables) > 0 {
-		message = messageWithAttachments(attachmentables, dto, text)
-	} else {
-		message = messageText(dto, text)
-	}
+	//if len(attachmentables) > 0 {
+	//	message = messageWithAttachments(attachmentables, dto, text)
+	//} else {
+	message = messageText(dto, text)
+	//}
 
 	var baseScreenInterface BaseScreen = DoorLockModelDetailScreen{OutputMessage: message}
 
@@ -80,26 +78,26 @@ func getTextDoorModel(doorsLockModel DoorLockModel.DoorsLockModel) string {
 	Описание: ` + doorsLockModel.Description + `.`
 }
 
-func messageWithAttachments(attachmentables []Attachment.Attachmentable, dto BaseScreenDTO, text string) messageType.MessageWithImagesGroup {
-	var mediaGroup []interface{}
-
-	for i, attachmentable := range attachmentables {
-
-		if attachmentable.Attachment.Alt != "" {
-			media := tgbotapi.NewInputMediaPhoto(tgbotapi.FileID(attachmentable.Attachment.Alt))
-			if i == 0 {
-				media.Caption = text
-			}
-			mediaGroup = append(mediaGroup, media)
-		}
-	}
-
-	return messageType.MessageWithImagesGroup{
-		Bot:    dto.Bot,
-		ChatId: dto.User.TgUserId,
-		Media:  mediaGroup,
-	}
-}
+//func messageWithAttachments(attachmentables []Attachment.Attachmentable, dto BaseScreenDTO, text string) messageType.MessageWithImagesGroup {
+//	var mediaGroup []interface{}
+//
+//	for i, attachmentable := range attachmentables {
+//
+//		if attachmentable.Attachment.Alt != "" {
+//			media := tgbotapi.NewInputMediaPhoto(tgbotapi.FileID(attachmentable.Attachment.Alt))
+//			if i == 0 {
+//				media.Caption = text
+//			}
+//			mediaGroup = append(mediaGroup, media)
+//		}
+//	}
+//
+//	return messageType.MessageWithImagesGroup{
+//		Bot:    dto.Bot,
+//		ChatId: dto.User.TgUserId,
+//		Media:  mediaGroup,
+//	}
+//}
 
 func messageText(dto BaseScreenDTO, text string) messageType.TextMessage {
 
