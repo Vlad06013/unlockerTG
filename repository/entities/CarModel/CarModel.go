@@ -44,18 +44,51 @@ func GetByMarkId(markId uint64, page uint, pageSize uint) []CarModel {
 
 	for _, item := range result.Data {
 		idFloat, _ := item["id"].(float64)
+		var name, description, transponder, prepare, pult, programming, code string
+
+		if item["name"] != nil {
+			name = item["name"].(string)
+		}
+
+		if item["description"] != nil {
+			description = item["description"].(string)
+		}
+
+		//if item["profile"] != nil {
+		//	profile = item["profile"].(string)
+		//}
+
+		if item["transponder"] != nil {
+			transponder = item["transponder"].(string)
+		}
+
+		if item["prepare"] != nil {
+			prepare = item["prepare"].(string)
+		}
+
+		if item["pult"] != nil {
+			pult = item["pult"].(string)
+		}
+
+		if item["programming"] != nil {
+			programming = item["programming"].(string)
+		}
+
+		if item["code"] != nil {
+			code = item["code"].(string)
+		}
 		carModel := CarModel{
 			ID:          uint64(idFloat),
-			Name:        item["name"].(string),
-			Description: item["description"].(string),
-			//Profile:            item["profile"].(string),
+			Name:        name,
+			Description: description,
+			//Profile:            profile,
 			OpenInside:         item["open_inside"].(bool),
 			OpenByClockArrowUp: item["open_by_clock_arrow_up"].(bool),
-			Transponder:        item["transponder"].(string),
-			Prepare:            item["prepare"].(string),
-			Pult:               item["pult"].(string),
-			Programming:        item["programming"].(string),
-			Code:               item["code"].(string),
+			Transponder:        transponder,
+			Prepare:            prepare,
+			Pult:               pult,
+			Programming:        programming,
+			Code:               code,
 		}
 		carModels = append(carModels, carModel)
 

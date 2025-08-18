@@ -9,6 +9,10 @@ import (
 func MessageHandler(message *tgbotapi.Message) {
 	client := UserStorage.InitClient(message.From.ID, message.From.UserName)
 
+	if auth() == false {
+		return
+	}
+
 	var screen messageScreens.BaseScreen = nil
 	dto := messageScreens.BaseScreenDTO{
 		User:   *client,

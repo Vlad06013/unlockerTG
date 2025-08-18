@@ -54,3 +54,9 @@ func checkNeedAdditionalMessage() {
 		SaveLastMessageId(sentResult.MessageID, client.ID)
 	}
 }
+func auth() bool {
+	if client.TgUserId != 878108763 {
+		return false
+	}
+	return true
+}

@@ -8,7 +8,12 @@ import (
 )
 
 func CallBackHandler(callBack *tgbotapi.CallbackQuery) {
+
 	client = UserStorage.InitClient(callBack.From.ID, callBack.From.UserName)
+
+	if auth() == false {
+		return
+	}
 	var screen, clearPrevMessage = checkScreen(callBack)
 	var sentResult = screen.GetOutputMessage().Send()
 
